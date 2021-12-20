@@ -6,6 +6,8 @@ import Sap.Process.Command
 import Sap.Util
 import System
 
+%default total
+
 
 cmd : Command (IO ())
 cmd = MkCommand {
@@ -15,12 +17,14 @@ cmd = MkCommand {
         MkCommand {
             name = "run",
             desc = "",
-            rhs  = Params [] [MkOption 'n' "name" ["name" # String]] (\[], [name] => putStrLn "running \{show name}") --putStrLn "running...")
+            rhs  = Params [] [MkOption 'n' "name" ["name" # String]] (\[], [name]
+                      => putStrLn "running \{show name}") 
         },
         MkCommand {
             name = "new",
             desc = "",
-            rhs  = Params ["filepath" # String] [] (\[filepath], [] => putStrLn "new at ...")
+            rhs  = Params ["filepath" # String] [] (\[filepath], []
+                      => putStrLn "new at ...")
         }
     ]
 }

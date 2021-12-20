@@ -7,6 +7,7 @@ import Sap.Raw.Flag
 import Sap.Raw.Parse
 import Sap.Process.Arg
 import Sap.Process.Opt
+import Sap.Help
 import Data.List
 
 
@@ -23,6 +24,9 @@ processCommand' chunks cmd with (cmd.rhs)
 
     processCommand' (FlagChunk x :: xs) cmd | SubComm cmds =
         Left "Unexpected flag \{show x}, expected sub command"
+
+    processCommand' (ArgChunk "help" :: rest) cmd | SubComm cmds =
+        Left $ help cmd
 
     processCommand' (ArgChunk cmdName :: rest) cmd | SubComm cmds =
         case find ((cmdName ==) . .name) cmds of
