@@ -1,7 +1,9 @@
 module NewExample
 
 import Sap.Definition
+import Sap.Parsable
 import Sap.Implementation
+import Sap.Util
 import System
 
 
@@ -13,12 +15,12 @@ cmd = MkCommand {
         MkCommand {
             name = "run",
             desc = "",
-            rhs  = Params [] [MkOption "--name" Str] (\[], [name] => putStrLn "running \{show name}") --putStrLn "running...")
+            rhs  = Params [] [MkOption 'n' "name" [String]] (\[], [name] => putStrLn "running \{show name}") --putStrLn "running...")
         },
         MkCommand {
             name = "new",
             desc = "",
-            rhs  = Params ["filepath" # Str] [] (\[filepath], [] => putStrLn "new at ...")
+            rhs  = Params ["filepath" # String] [] (\[filepath], [] => putStrLn "new at ...")
         }
     ]
 }
@@ -29,6 +31,6 @@ main : IO ()
 main = do
     _ :: xs <- getArgs
 
-    case handleArgs xs cmd of
+    case parseCommand xs cmd of
         Left err => putStrLn err
         Right res => res

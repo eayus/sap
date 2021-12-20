@@ -19,5 +19,6 @@ allTautology f {xs = x :: xs} = f x :: allTautology f
 
 -- "HashMap"
 
+public export
 Map : Type -> Type -> Type
 Map a b = List (a, b)
