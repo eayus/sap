@@ -16,7 +16,7 @@ authors = "Ellis Kesterton"
 modules = Sap.Definition, Sap.Parsable, Sap.Process.Command, Sap.Util
 
 -- main file (i.e. file to load at REPL)
-main = NewExample
+main = Example
 
 -- name of executable
 executable = example

@@ -1,4 +1,4 @@
-module NewExample
+module Example
 
 import Sap.Definition
 import Sap.Parsable
