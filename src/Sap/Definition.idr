@@ -19,10 +19,14 @@ record Param where
 public export
 record Option where
     constructor MkOption
-    short : Char
-    long  : String
-    types : List Type
-    {auto parsables : All Parsable types}
+    short  : Char
+    long   : String
+    params : List Param
+
+
+public export
+Arg : Param -> Type
+Arg param = param.type
 
 
 mutual
@@ -41,5 +45,5 @@ mutual
 
         Params  : (params  : List Param)
                -> (options : List Option)
-               -> (All (.type) params -> All (Maybe . HList . .types) options -> a)
+               -> (All Arg params -> All (Maybe . All Arg . .params) options -> a)
                -> RHS a

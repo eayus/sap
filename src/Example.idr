@@ -2,7 +2,7 @@ module NewExample
 
 import Sap.Definition
 import Sap.Parsable
-import Sap.Implementation
+import Sap.Process.Command
 import Sap.Util
 import System
 
@@ -15,7 +15,7 @@ cmd = MkCommand {
         MkCommand {
             name = "run",
             desc = "",
-            rhs  = Params [] [MkOption 'n' "name" [String]] (\[], [name] => putStrLn "running \{show name}") --putStrLn "running...")
+            rhs  = Params [] [MkOption 'n' "name" ["name" # String]] (\[], [name] => putStrLn "running \{show name}") --putStrLn "running...")
         },
         MkCommand {
             name = "new",
@@ -31,6 +31,6 @@ main : IO ()
 main = do
     _ :: xs <- getArgs
 
-    case parseCommand xs cmd of
+    case processCommand xs cmd of
         Left err => putStrLn err
         Right res => res
