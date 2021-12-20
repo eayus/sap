@@ -12,18 +12,18 @@ import System
 cmd : Command (IO ())
 cmd = MkCommand {
     name = "exmaple",
-    desc = "",
-    rhs  = SubComm [
+    desc = "Package manager CLI",
+    rhs  = SubCmds [
         MkCommand {
             name = "run",
-            desc = "",
-            rhs  = Params [] [MkOption 'n' "name" ["name" # String]] (\[], [name]
+            desc = "Run the built project",
+            rhs  = Basic [] [MkOption 'n' "name" ["name" # String]] (\[], [name]
                       => putStrLn "running \{show name}") 
         },
         MkCommand {
             name = "new",
-            desc = "",
-            rhs  = Params ["filepath" # String] [] (\[filepath], []
+            desc = "Create a new project",
+            rhs  = Basic ["filepath" # String] [] (\[filepath], []
                       => putStrLn "new at ...")
         }
     ]

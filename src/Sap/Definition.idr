@@ -40,10 +40,10 @@ mutual
 
     public export
     data RHS : Type -> Type where
-        SubComm : List (Command a)
+        SubCmds : List (Command a)
                -> RHS a
 
-        Params  : (params  : List Param)
+        Basic   : (params  : List Param)
                -> (options : List Option)
                -> (All Arg params -> All (Maybe . All Arg . .params) options -> a)
                -> RHS a
