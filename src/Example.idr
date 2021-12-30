@@ -4,23 +4,24 @@ import Sap.Definition
 import Sap.Parsable
 import Sap.Process.Command
 import Sap.Util
+import Sap
 import System
 
 %default total
 
 
 cmd : Command (IO ())
-cmd = MkCommand {
+cmd = Cmd {
     name = "exmaple",
     desc = "Package manager CLI",
     rhs  = SubCmds [
-        MkCommand {
+        Cmd {
             name = "run",
             desc = "Run the built project",
             rhs  = Basic [] [MkOption 'n' "name" ["name" # String]] (\[], [name]
                       => putStrLn "running \{show name}") 
         },
-        MkCommand {
+        Cmd {
             name = "new",
             desc = "Create a new project",
             rhs  = Basic ["filepath" # String] [] (\[filepath], []
@@ -32,9 +33,4 @@ cmd = MkCommand {
 
 partial
 main : IO ()
-main = do
-    _ :: xs <- getArgs
-
-    case processCommand xs cmd of
-        Left err => putStrLn err
-        Right res => res
+main = runCommand cmd

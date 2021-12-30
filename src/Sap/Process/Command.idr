@@ -11,31 +11,45 @@ import Sap.Help
 import Data.List
 
 
-processCommand' : List Chunk -> Command a -> Error a
+consHelpPath : String -> Result a -> Result a
+consHelpPath s = withError go
+    where
+        go : Failure -> Failure
+        go (HelpFor (MkHelp _ cmdPath cmd)) = HelpFor $ MkHelp _ (s :: cmdPath) cmd
+        go (Error x) = Error x
+
+
+processCommand' : List Chunk -> Command a -> Result a
 processCommand' chunks cmd with (cmd.rhs)
     _ | Basic params options run = do
           let inputs = parseInputs chunks
+          when (any (isHelpFlag . fst) inputs.opts) $ throwError $ HelpFor $ MkHelp _ [] cmd
           args' <- processArgs inputs.args params
           opts' <- processOpts options inputs.opts
           pure $ run args' opts'
 
     processCommand' [] cmd | SubCmds cmds =
-        Left "Expected sub command"
+        throwError $ Error "Expected sub command"
 
     processCommand' (FlagChunk x :: xs) cmd | SubCmds cmds =
-        Left "Unexpected flag \{show x}, expected sub command"
+        if isHelpFlag x
+            then throwError $ HelpFor $ MkHelp _ [] cmd
+            else do
+                lift $ tell ["Encountered flag before subcommand, ignoring"]
+                processCommand' xs cmd
 
     processCommand' (ArgChunk "help" :: rest) cmd | SubCmds cmds =
-        Left $ help cmd
+        throwError $ HelpFor $ MkHelp _ [] cmd
 
     processCommand' (ArgChunk cmdName :: rest) cmd | SubCmds cmds =
         case find ((cmdName ==) . .name) cmds of
-             Just subCmd => processCommand' rest subCmd
-             Nothing => Left "Invalid subcommand \{cmdName}"
+             Just subCmd => consHelpPath cmd.name $ processCommand' rest subCmd
+             Nothing => throwError $ Error "Invalid subcommand \{cmdName}"
 
 
 export
-processCommand : List String -> Command a -> Error a
+processCommand : List String -> Command a -> Result a
 processCommand input cmd = do
-    chunks <- bimap show id $ chunkify input
+    let chunks = bimap (Error . show) id $ chunkify input
+    chunks <- MkEitherT $ pure chunks
     processCommand' chunks cmd

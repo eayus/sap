@@ -1,6 +1,7 @@
 module Sap.Help
 
 import Sap.Definition
+import Data.String
 
 
 rhsHelp : RHS a -> String
@@ -24,3 +25,11 @@ help x =
 
 --export
 --paramsHelp : List Param -> List Option -> String
+
+
+export
+printHelp : Help -> IO ()
+printHelp (MkHelp _ path x) =
+    case x of
+            (Cmd name desc (SubCmds xs)) => putStrLn "Help for \{unwords (path ++ [name])}"
+            (Cmd name desc (Basic params options f)) => putStrLn "Help for \{unwords (path ++ [name])}"

@@ -3,6 +3,10 @@ module Sap.Definition
 import Sap.Parsable
 import Data.List
 import public Data.List.Quantifiers
+import public Control.Monad.Identity
+import public Control.Monad.Writer
+import public Control.Monad.Either
+import public Control.Monad.Trans
 
 
 %default total
@@ -32,7 +36,7 @@ Arg param = param.type
 mutual
     public export
     record Command (a : Type) where
-        constructor MkCommand
+        constructor Cmd
         name : String
         desc : String
         rhs  : RHS a
@@ -47,3 +51,22 @@ mutual
                -> (options : List Option)
                -> (All Arg params -> All (Maybe . All Arg . .params) options -> a)
                -> RHS a
+
+
+public export
+record Help where
+    constructor MkHelp
+    0 ty : Type
+    cmdPath : List String
+    cmd : Command ty
+
+
+public export
+data Failure
+    = HelpFor Help
+    | Error String
+
+
+public export
+Result : Type -> Type
+Result = EitherT Failure (Writer (List String))

@@ -5,11 +5,11 @@ import Sap.Util
 
 public export
 interface Parsable (a : Type) where
-    parse : String -> Error a
+    parse : String -> Either String a
 
 
 export
-parseTo : String -> (a : Type) -> {auto _ : Parsable a} -> Error a 
+parseTo : String -> (a : Type) -> {auto _ : Parsable a} -> Either String a 
 parseTo s _ = parse s
 
 

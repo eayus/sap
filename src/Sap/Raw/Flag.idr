@@ -23,6 +23,13 @@ parseFlag s with (unpack s)
 
 
 public export
+isHelpFlag : Flag -> Bool
+isHelpFlag (Short 'h') = True
+isHelpFlag (Long "help") = True
+isHelpFlag _ = False
+
+
+public export
 Show Flag where
     show (Short x) = "-\{show x}"
     show (Long x) = "--\{x}"
