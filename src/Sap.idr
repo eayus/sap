@@ -1,9 +1,10 @@
 module Sap
 
-import Sap.Definition
 import Sap.Help
-import Sap.Process.Command
 import System
+import public Sap.Definition
+import public Sap.Process.Command
+import public Sap.Parsable
 
 
 public export partial
