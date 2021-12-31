@@ -1,0 +1,19 @@
+[
+  {
+    "name": "sap",
+    "deps": [],
+    "modules": [
+      "Sap",
+      "Sap.Definition",
+      "Sap.Help",
+      "Sap.Parsable",
+      "Sap.Process.Arg",
+      "Sap.Process.Command",
+      "Sap.Process.Opt",
+      "Sap.Raw.Chunk",
+      "Sap.Raw.Flag",
+      "Sap.Raw.Parse",
+      "Sap.Util"
+    ]
+  }
+]
