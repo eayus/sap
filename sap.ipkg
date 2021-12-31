@@ -13,7 +13,7 @@ authors = "Ellis Kesterton"
 -- depends =
 
 -- modules to install
-modules = Sap.Definition, Sap.Parsable, Sap.Process.Command, Sap.Util
+modules = Sap
 
 -- main file (i.e. file to load at REPL)
 main = Example
