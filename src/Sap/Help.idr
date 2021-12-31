@@ -1,6 +1,7 @@
 module Sap.Help
 
 import Sap.Definition
+import Sap.Parsable
 import Data.String
 
 
@@ -10,26 +11,26 @@ rhsHelp (SubCmds xs) =
   The following sub-commands are available:
   \{concatMap (\x => "\t" ++ x.name ++ " - " ++ x.desc ++ "\n") xs}
   """
-rhsHelp (Basic params options f) = ""
+rhsHelp (Basic params options _) =
+  """
+  The following parameters are required:
+  \{concatMap (\x => let _ = x.parsable in "(" ++ x.name ++ ":" ++ stringify {a = x.type} ++ ")") params}
 
-export
-help : Command a -> String
-help x =
+  The following options are available:
+  \{concatMap (\x => "-" ++ pack [x.short] ++ " | " ++ "--" ++ x.long ++ "\n") options}
   """
 
-  \{x.name} - \{x.desc}
+
+help : List String -> Command a -> String
+help path x =
+  """
+
+  \{unwords $ path ++ [x.name]} - \{x.desc}
 
   \{rhsHelp x.rhs}
   """
 
 
---export
---paramsHelp : List Param -> List Option -> String
-
-
 export
 printHelp : Help -> IO ()
-printHelp (MkHelp _ path x) =
-    case x of
-            (Cmd name desc (SubCmds xs)) => putStrLn "Help for \{unwords (path ++ [name])}"
-            (Cmd name desc (Basic params options f)) => putStrLn "Help for \{unwords (path ++ [name])}"
+printHelp (MkHelp _ path x) = putStrLn $ help path x
