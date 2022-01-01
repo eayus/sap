@@ -4,7 +4,6 @@ import Sap
 
 %default total
 
-
 cmd : Command (IO ())
 cmd = Cmd {
     name = "exmaple",
@@ -13,14 +12,14 @@ cmd = Cmd {
         Cmd {
             name = "run",
             desc = "Run the built project",
-            rhs  = Basic [] [MkOption 'n' "name" ["name" # String]] (\[], [name]
-                      => putStrLn "running \{show name}") 
+            rhs  = Basic [] [MkOption 'n' "name" ["name" # String]] (\opts
+                      => putStrLn "running \{show $ optAt 0 opts}")
         },
         Cmd {
             name = "new",
             desc = "Create a new project",
-            rhs  = Basic ["filepath" # String] [] (\[filepath], []
-                      => putStrLn "new at ...")
+            rhs  = Basic ["filepath" # String] [] (\filepath, opts
+                      => putStrLn "new at \{show filepath}")
         }
     ]
 }
