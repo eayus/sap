@@ -17,7 +17,7 @@ lookupOpt opt optMap = lookup (Short opt.short) optMap
 --       and more easily detect help opts.
 export
 processOpts : (opts : List Option) -> OptMap
-           -> Result (All (Maybe . All Arg . .params) opts)
+           -> Result (Opts opts)
 processOpts []        optMap = pure []
 processOpts (opt :: opts) optMap =
     case lookupOpt opt optMap of
