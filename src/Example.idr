@@ -1,11 +1,6 @@
 module Example
 
-import Sap.Definition
-import Sap.Parsable
-import Sap.Process.Command
-import Sap.Util
 import Sap
-import System
 
 %default total
 

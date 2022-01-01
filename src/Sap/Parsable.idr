@@ -6,6 +6,7 @@ import Sap.Util
 public export
 interface Parsable (a : Type) where
     parse : String -> Either String a
+    stringify : String
 
 
 export
@@ -16,3 +17,4 @@ parseTo s _ = parse s
 public export
 Parsable String where
     parse s = pure s
+    stringify = "String"
