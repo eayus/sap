@@ -3,31 +3,48 @@ module Sap.Help
 import Sap.Definition
 import Sap.Parsable
 import Data.String
+import Control.ANSI
+
+
+subCommandHelp : Command a -> String
+subCommandHelp cmd = "\t\{show $ bolden cmd.name} - \{cmd.desc}"
+
+
+paramHelp : Param -> String
+paramHelp p = let _ = p.parsable in show $ italicize $ "(\{p.name} : \{stringify {a = p.type}})"
+
+
+optionHelp : Option -> String
+optionHelp option = "\t\{short}, \{long}   \{unwords $ map paramHelp option.params}"
+    where
+        short : String
+        short = "-\{pack [option.short]}"
+
+        long : String
+        long = "--\{option.long}"
 
 
 rhsHelp : RHS a -> String
 rhsHelp (SubCmds xs) =
   """
   The following sub-commands are available:
-  \{concatMap (\x => "\t" ++ x.name ++ " - " ++ x.desc ++ "\n") xs}
+  \{unlines $ map subCommandHelp xs}
   """
 rhsHelp (Basic params options _) =
   """
   The following parameters are required:
-  \{concatMap (\x => let _ = x.parsable in "(" ++ x.name ++ ":" ++ stringify {a = x.type} ++ ")") params}
+  \{unlines $ map (("\t" ++) . paramHelp) params}
 
   The following options are available:
-  \{concatMap (\x => "-" ++ pack [x.short] ++ " | " ++ "--" ++ x.long ++ "\n") options}
+  \{unlines $ map optionHelp options}
   """
 
 
 help : List String -> Command a -> String
 help path x =
   """
-
-  \{unwords $ path ++ [x.name]} - \{x.desc}
-
-  \{rhsHelp x.rhs}
+  \{show $ bolden $ unwords $ path ++ [x.name]} - \{x.desc}
+  \n\{rhsHelp x.rhs}
   """
 
 

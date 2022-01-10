@@ -2,6 +2,7 @@ package sap
 
 authors = "Ellis Kesterton"
 
+depends = contrib
 
 main = Example
 
