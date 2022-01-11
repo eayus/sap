@@ -1,6 +1,7 @@
 module Sap.Definition
 
 import Sap.Parsable
+import Sap.Util
 import Data.List
 import public Data.List.Elem
 import public Data.List.Quantifiers
@@ -34,47 +35,19 @@ Arg : Param -> Type
 Arg param = param.type
 
 
-public export 0
-Args : List Param -> Type -> Type
-Args [] r = r
-Args (p :: ps) r = Arg p -> Args ps r
+public export
+Args : List Param -> Type
+Args = All Arg
 
 
 public export
-data Opts : List Option -> Type where
-    Nil : Opts []
-    (::) : Maybe (All Arg opt.params) -> Opts opts -> Opts (opt :: opts)
+Opt : Option -> Type
+Opt o = Maybe (Args o.params)
 
 
 public export
-getOpt :
-    (0 opt : Option) ->
-    {auto elem : Elem opt opts} ->
-    Opts opts ->
-    Maybe (All Arg opt.params)
-getOpt opt {elem = Here} (x :: _) = x
-getOpt opt {elem = (There elem)} (_ :: xs) = getOpt opt {elem} xs
-
-
-public export
-optAt :
-    (n : Nat) ->
-    {auto ib : InBounds n opts} ->
-    Opts opts ->
-    Maybe (All Arg (index n opts @{ib}).params)
-optAt 0 {ib = InFirst} (x :: xs) = x
-optAt (S k) {ib = (InLater ib)} (x :: xs) = optAt k xs
-
-
-public export
-getParam :
-    {0 params : List Param} ->
-    (n : Nat) ->
-    {auto ib : InBounds n params} ->
-    All Arg params ->
-    (index n params @{ib}).type
-getParam Z {ib = InFirst} (x :: _) = x
-getParam (S n) {ib = InLater ib} (_ :: xs) = getParam n xs
+Opts : List Option -> Type
+Opts = All Opt
 
 
 mutual
@@ -93,7 +66,7 @@ mutual
 
         Basic   : (params  : List Param)
                -> (options : List Option)
-               -> (Args params (Opts options -> a))
+               -> (Args params -> Opts options -> a)
                -> RHS a
 
 
@@ -114,3 +87,31 @@ data Failure
 public export
 Result : Type -> Type
 Result = EitherT Failure (Writer (List String))
+
+
+
+public export
+simpleOpt : (name : String) -> (a : Type) -> {auto _ : Parsable a} -> {auto ne : NonEmpty (unpack name)} -> Option
+simpleOpt name ty with (unpack name)
+  simpleOpt name ty | (c :: cs) = MkOption { short = c, long = name, params = [name # ty] }
+
+
+public export
+indexArgs : (n : Nat) -> {auto 0 ib : InBounds n params} -> Args params -> Arg (index n params)
+indexArgs = indexAll
+
+
+public export
+argByName : (0 name : String) -> Args params -> {auto elem : Any (\x => x.name = name) params} -> Arg (getAny elem)
+argByName name = allByProp (\x => x.name = name)
+
+
+public export
+optByShort : (0 short : String) -> Opts options -> {auto elem : Any (\x => x.short = short) options} -> Opt (getAny elem)
+optByShort short = allByProp (\x => x.short = short)
+
+
+public export
+optByLong : (0 long : String) -> Opts options -> {auto elem : Any (\x => x.long = long) options} -> Opt (getAny elem)
+optByLong long = allByProp (\x => x.long = long)
+

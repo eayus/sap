@@ -3,6 +3,7 @@ module Sap
 import public Data.List
 import Sap.Help
 import System
+import public Sap.Util
 import public Sap.Definition
 import public Sap.Process.Command
 import public Sap.Parsable

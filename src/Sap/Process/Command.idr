@@ -18,9 +18,6 @@ consHelpPath s = withError go
         go (HelpFor (MkHelp _ cmdPath cmd)) = HelpFor $ MkHelp _ (s :: cmdPath) cmd
         go (Error x) = Error x
 
-toAll : {0 params : List Param} -> Args params r -> All Arg params -> r
-toAll fn [] = fn
-toAll fn (x :: y) = toAll (fn x) y
 
 processCommand' : List Chunk -> Command a -> Result a
 processCommand' chunks cmd with (cmd.rhs)
@@ -29,7 +26,7 @@ processCommand' chunks cmd with (cmd.rhs)
           when (any (isHelpFlag . fst) inputs.opts) $ throwError $ HelpFor $ MkHelp _ [] cmd
           args' <- processArgs inputs.args params
           opts' <- processOpts options inputs.opts
-          pure $ toAll run args' opts'
+          pure $ run args' opts'
 
     processCommand' [] cmd | SubCmds cmds =
         throwError $ Error "Expected sub command"

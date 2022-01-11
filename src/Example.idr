@@ -12,13 +12,16 @@ cmd = Cmd {
         Cmd {
             name = "run",
             desc = "Run the built project",
-            rhs  = Basic [] [MkOption 'n' "name" ["name" # String]] (\opts
-                      => putStrLn "running \{show $ optAt 0 opts}")
+            rhs  = Basic [] [simpleOpt "name" String]
+                (\[], opts =>
+                    case optByLong "name" opts of
+                         Just [name] => putStrLn "Running \{name}!"
+                         Nothing     => putStrLn "Running!")
         },
         Cmd {
             name = "new",
             desc = "Create a new project",
-            rhs  = Basic ["filepath" # String] [] (\filepath, opts
+            rhs  = Basic ["filepath" # String] [] (\[filepath], []
                       => putStrLn "new at \{show filepath}")
         }
     ]
